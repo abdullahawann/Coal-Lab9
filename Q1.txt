@@ -1,0 +1,132 @@
+[org 0x0100]
+
+jmp start
+
+str1: db "My name is Abdullah"
+str2: db "I am strong"
+str3: db "I am from FAST"
+str4: db "My Roll no is : 21L-5663"
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+clrscr : 
+push ax
+push es
+push di
+mov ax,0xb800
+mov es,ax
+mov di,0
+
+nextloc:
+
+mov word [es:di],0x0720
+add di,2
+cmp di,4000
+jne nextloc
+pop di
+pop es
+pop ax 
+ret
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+checkKeyPressed:
+cmp cx, 4
+je keypressexit
+mov ah,0
+int 16h
+cmp al, 0
+jge check_next
+jmp checkKeyPressed
+check_next:
+cmp al,127
+jge checkKeyPressed
+inc cx
+cmp cx, 1
+je printStr1
+cmp cx, 2
+je printStr2
+cmp cx, 3
+je printStr3
+cmp cx, 4
+je printStr4
+
+printStr1:
+mov ax, 0xb800
+mov es, ax
+mov di, 0
+mov cx, 19
+mov si, str1
+mov ah, 0xE
+print1:
+mov al, [si]
+mov [es:di], ax
+inc si
+add di, 2
+loop print1
+mov cx, 1
+jmp checkKeyPressed
+
+printStr2:
+mov ax, 0xb800
+mov es, ax
+mov di, 160
+mov cx, 11
+mov si, str2
+mov ah, 0xE
+print2:
+mov al,[si]
+mov [es:di], ax
+inc si
+add di, 2
+loop print2
+mov cx, 2
+jmp checkKeyPressed
+
+printStr3:
+mov ax,0xb800
+mov es, ax
+mov di, 320
+mov cx, 14
+mov si, str3
+mov ah, 0xE
+print3:
+mov al, [si]
+mov [es:di], ax
+inc si
+add di, 2
+loop print3
+mov cx, 3
+jmp checkKeyPressed
+
+printStr4:
+mov ax, 0xb800
+mov es, ax
+mov di, 480
+mov cx, 24
+mov si, str4
+mov ah, 0xE
+print4:
+mov al, [si]
+mov [es:di], ax
+inc si
+add di, 2
+loop print4
+mov cx, 4
+jmp checkKeyPressed
+
+keypressexit:
+ret
+
+;--------------------------------------------------------------------------------------------------------------------------------------------------------
+
+start:
+call clrscr
+
+mov cx,0
+mov ax,0
+
+call checkKeyPressed
+
+mov ax,0x4c00
+int 21h
